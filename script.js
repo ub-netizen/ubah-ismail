@@ -1,81 +1,115 @@
-const tabButtons = document.querySelectorAll(".tab-button");
-const tabContents = document.querySelectorAll(".tab-content");
+document.addEventListener("DOMContentLoaded", () => {
+    const tabButtons = document.querySelectorAll(".tab-button");
+    const tabContents = document.querySelectorAll(".tab-content");
+    const progressBar = document.getElementById("progressBar");
+    const scrollTopButton = document.getElementById("scrollTop");
 
-function showTab(tabName, updateUrl = true) {
-    const selectedContent = document.getElementById(tabName);
+    const tabAliases = {
+        leadership: "extracurriculars",
+        extracurriculars: "leadership"
+    };
 
-    if (!selectedContent) return;
+    function showTab(tabName, updateUrl = true) {
+        const resolvedTabName = document.getElementById(tabName)
+            ? tabName
+            : tabAliases[tabName];
+
+        const selectedContent =
+            document.getElementById(resolvedTabName);
+
+        if (!selectedContent) {
+            console.error(`No section found for tab: ${tabName}`);
+            return;
+        }
+
+        tabButtons.forEach((button) => {
+            const buttonTab = button.getAttribute("data-tab");
+
+            button.classList.toggle(
+                "active",
+                buttonTab === tabName ||
+                buttonTab === resolvedTabName
+            );
+        });
+
+        tabContents.forEach((content) => {
+            content.classList.toggle(
+                "active",
+                content.id === resolvedTabName
+            );
+        });
+
+        if (updateUrl) {
+            history.replaceState(null, "", `#${tabName}`);
+        }
+    }
 
     tabButtons.forEach((button) => {
-        button.classList.toggle(
-            "active",
-            button.dataset.tab === tabName
-        );
+        button.addEventListener("click", (event) => {
+            event.preventDefault();
+
+            const tabName = button.getAttribute("data-tab");
+            showTab(tabName);
+
+            if (window.innerWidth <= 700) {
+                document.querySelector("main").scrollIntoView({
+                    behavior: "smooth"
+                });
+            }
+        });
     });
 
-    tabContents.forEach((content) => {
-        content.classList.toggle(
-            "active",
-            content.id === tabName
-        );
-    });
+    const startingTab = window.location.hash.replace("#", "");
 
-    if (updateUrl) {
-        history.replaceState(null, "", `#${tabName}`);
+    if (startingTab) {
+        showTab(startingTab, false);
     }
-}
 
-tabButtons.forEach((button) => {
-    button.addEventListener("click", (event) => {
-        event.preventDefault();
+    window.addEventListener("hashchange", () => {
+        const tabName = window.location.hash.replace("#", "");
 
-        showTab(button.dataset.tab);
-
-        if (window.innerWidth <= 700) {
-            document.querySelector("main").scrollIntoView({
-                behavior: "smooth"
-            });
+        if (tabName) {
+            showTab(tabName, false);
         }
     });
-});
 
-const startingTab = window.location.hash.replace("#", "");
+    function updateScrollUi() {
+        const scrollTop =
+            document.body.scrollTop ||
+            document.documentElement.scrollTop;
 
-if (startingTab && document.getElementById(startingTab)) {
-    showTab(startingTab, false);
-}
+        const scrollHeight =
+            document.documentElement.scrollHeight -
+            document.documentElement.clientHeight;
 
-const progressBar = document.getElementById("progressBar");
-const scrollTopButton = document.getElementById("scrollTop");
+        if (progressBar) {
+            progressBar.style.width = `${
+                scrollHeight
+                    ? (scrollTop / scrollHeight) * 100
+                    : 0
+            }%`;
+        }
 
-function updateScrollUi() {
-    const scrollTop =
-        document.body.scrollTop ||
-        document.documentElement.scrollTop;
+        if (scrollTopButton) {
+            scrollTopButton.classList.toggle(
+                "visible",
+                scrollTop > 300
+            );
+        }
+    }
 
-    const scrollHeight =
-        document.documentElement.scrollHeight -
-        document.documentElement.clientHeight;
-
-    progressBar.style.width = `${
-        scrollHeight ? (scrollTop / scrollHeight) * 100 : 0
-    }%`;
-
-    scrollTopButton.classList.toggle(
-        "visible",
-        scrollTop > 300
-    );
-}
-
-window.addEventListener("scroll", updateScrollUi, {
-    passive: true
-});
-
-scrollTopButton.addEventListener("click", () => {
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+    window.addEventListener("scroll", updateScrollUi, {
+        passive: true
     });
-});
 
-updateScrollUi();
+    if (scrollTopButton) {
+        scrollTopButton.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+    }
+
+    updateScrollUi();
+});
