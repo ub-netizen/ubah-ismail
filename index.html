@@ -1,15 +1,609 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ubah Ismail | UC Berkeley Mechanical Engineering student portfolio">
     <title>Ubah Ismail | Portfolio</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✨</text></svg>">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --dark: #0f172a;
+            --dark-alt: #1e293b;
+            --light: #f1f5f9;
+            --text: #334155;
+            --text-light: #64748b;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        #particles-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            opacity: 0.035;
+        }
+
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .progress-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        header {
+            position: relative;
+            overflow: hidden;
+            padding: 4rem 2rem 2rem;
+            color: white;
+            background: linear-gradient(135deg, var(--dark), var(--dark-alt));
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: moveBackground 20s linear infinite;
+        }
+
+        @keyframes moveBackground {
+            from {
+                transform: translate(0, 0);
+            }
+
+            to {
+                transform: translate(50px, 50px);
+            }
+        }
+
+        .header-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .profile-photo-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-photo {
+            position: relative;
+            z-index: 2;
+            width: 180px;
+            height: 180px;
+            object-fit: cover;
+            border: 5px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .photo-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 205px;
+            height: 205px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .photo-fallback {
+            display: grid;
+            place-items: center;
+            width: 205px;
+            height: 205px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .photo-fallback::after {
+            content: "UI";
+            color: white;
+            font-size: 3.5rem;
+            font-weight: 800;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+                opacity: 0.3;
+            }
+        }
+
+        .eyebrow {
+            margin-bottom: 0.3rem;
+            color: var(--accent);
+            font-size: 0.85rem;
+            font-weight: bold;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .typing-effect {
+            margin-bottom: 0.5rem;
+            color: white;
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            max-width: 700px;
+            margin-bottom: 1.25rem;
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1.2rem;
+            font-weight: 300;
+            text-align: center;
+        }
+
+        .contact-links {
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .contact-links a {
+            padding: 0.45rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50px;
+            color: white;
+            text-decoration: none;
+            transition: 0.3s ease;
+        }
+
+        .contact-links a:hover {
+            border-color: var(--accent);
+            background: rgba(6, 182, 212, 0.15);
+            transform: translateY(-2px);
+        }
+
+        nav {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 2rem;
+        }
+
+        .tab-button {
+            padding: 0.8rem 1.7rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: white;
+            background: rgba(255, 255, 255, 0.08);
+            font-size: 0.85rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-decoration: none;
+            text-transform: uppercase;
+            transition: 0.35s ease;
+        }
+
+        .tab-button:hover {
+            color: var(--dark);
+            background: white;
+            transform: translateY(-3px);
+        }
+
+        .tab-button.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+        }
+
+        main {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: auto;
+            padding: 3rem 2rem;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 3.5rem;
+            border-radius: 24px;
+            background: white;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.12);
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1.8rem;
+            padding-bottom: 0.5rem;
+            color: var(--dark);
+            font-size: 2.8rem;
+        }
+
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            border-radius: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .intro-text {
+            margin-bottom: 1.4rem;
+            font-size: 1.08rem;
+            line-height: 1.9;
+        }
+
+        .section-subtitle {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 2.5rem 0 1.5rem;
+            color: var(--dark);
+            font-size: 1.75rem;
+        }
+
+        .section-subtitle::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+
+        .highlight-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .highlight-card {
+            padding: 1.4rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #fff, #f8fafc);
+        }
+
+        .highlight-label,
+        .card-label {
+            color: var(--primary);
+            font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .highlight-card h3 {
+            margin: 0.3rem 0;
+            color: var(--dark);
+        }
+
+        .highlight-card p {
+            color: var(--text-light);
+            font-size: 0.92rem;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .skill-badge {
+            padding: 1.15rem 0.8rem;
+            border-radius: 12px;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.25);
+            font-weight: bold;
+            text-align: center;
+            transition: 0.35s ease;
+        }
+
+        .skill-badge:hover {
+            transform: translateY(-4px) scale(1.03);
+        }
+
+        .achievement-list,
+        .activity-list,
+        .timeline-list {
+            padding: 0;
+            list-style: none;
+        }
+
+        .achievement-item,
+        .activity-item,
+        .timeline-item {
+            margin-bottom: 1.2rem;
+            padding: 1.5rem 1.7rem;
+            border-radius: 16px;
+            border-left: 5px solid var(--primary);
+            background: var(--light);
+            transition: 0.35s ease;
+        }
+
+        .achievement-item:hover,
+        .activity-item:hover,
+        .timeline-item:hover {
+            background: white;
+            transform: translateX(7px);
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.1);
+        }
+
+        .achievement-item strong,
+        .activity-item strong {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+
+        .achievement-item p,
+        .activity-item p,
+        .timeline-item p {
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.7rem;
+            margin: 2rem 0;
+        }
+
+        .card {
+            padding: 2rem;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #fff, var(--light));
+            transition: 0.4s ease;
+        }
+
+        .card:hover {
+            border-color: var(--primary);
+            transform: translateY(-7px);
+            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.2);
+        }
+
+        .card-icon {
+            margin-bottom: 0.8rem;
+            font-size: 2.5rem;
+        }
+
+        .card h3 {
+            margin: 0.4rem 0 0.8rem;
+            color: var(--dark);
+            font-size: 1.45rem;
+        }
+
+        .card p {
+            margin-bottom: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .tag-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            margin-top: 1.2rem;
+        }
+
+        .tag-list span {
+            padding: 0.3rem 0.65rem;
+            border-radius: 50px;
+            color: var(--primary-dark);
+            background: #e0e7ff;
+            font-size: 0.76rem;
+            font-weight: bold;
+        }
+
+        .timeline-item {
+            border-left: 4px solid var(--primary);
+            background: linear-gradient(135deg, #fff, var(--light));
+        }
+
+        .timeline-heading {
+            display: flex;
+            justify-content: space-between;
+            gap: 1.5rem;
+            margin-bottom: 0.55rem;
+        }
+
+        .timeline-heading h3 {
+            color: var(--dark);
+            font-size: 1.2rem;
+        }
+
+        .timeline-heading > span {
+            flex-shrink: 0;
+            color: var(--primary);
+            font-size: 0.86rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .timeline-company {
+            color: var(--primary);
+            font-size: 0.95rem;
+            font-weight: bold;
+        }
+
+        footer {
+            margin-top: 2rem;
+            padding: 2.5rem;
+            color: white;
+            background: var(--dark);
+            text-align: center;
+        }
+
+        #scrollTop {
+            position: fixed;
+            right: 30px;
+            bottom: 30px;
+            width: 50px;
+            height: 50px;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.35s ease;
+        }
+
+        #scrollTop.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 3rem 1rem 1.5rem;
+            }
+
+            .typing-effect {
+                font-size: 2.2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            nav {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .tab-button {
+                width: min(100%, 340px);
+                text-align: center;
+            }
+
+            main {
+                padding: 2rem 1rem;
+            }
+
+            .tab-content {
+                padding: 2rem 1.25rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .highlight-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline-heading {
+                flex-direction: column;
+                gap: 0.2rem;
+            }
+
+            .profile-photo {
+                width: 150px;
+                height: 150px;
+            }
+
+            .photo-ring,
+            .photo-fallback {
+                width: 172px;
+                height: 172px;
+            }
+        }
+    </style>
 </head>
+
 <body>
     <canvas id="particles-canvas"></canvas>
-    
+
     <div class="progress-container">
         <div class="progress-bar" id="progressBar"></div>
     </div>
@@ -18,132 +612,295 @@
         <div class="header-container">
             <div class="profile-photo-wrapper">
                 <div class="photo-ring"></div>
-                <img src="photo.h.jpg" alt="Ubah Ismail" class="profile-photo" />
+
+                <img
+                    src="photo.h.jpg"
+                    alt="Ubah Ismail"
+                    class="profile-photo"
+                    onerror="this.style.display='none'; this.parentElement.classList.add('photo-fallback');"
+                >
             </div>
+
+            <p class="eyebrow">Mechanical Engineering • UC Berkeley</p>
+
             <h1 class="typing-effect">Ubah Ismail</h1>
-            <p class="subtitle">High school student passionate about leadership, coding, and community service</p>
+
+            <p class="subtitle">
+                Designing practical systems through CAD, embedded technology, and hands-on prototyping.
+            </p>
+
+            <div class="contact-links">
+                <a href="mailto:ismailubah340@gmail.com">Email</a>
+                <a href="https://linkedin.com/in/ubah-ismail-abw"
+                   target="_blank"
+                   rel="noreferrer">
+                    LinkedIn
+                </a>
+            </div>
         </div>
+
         <nav>
             <a href="#about" class="tab-button active" data-tab="about">About</a>
             <a href="#projects" class="tab-button" data-tab="projects">Projects</a>
-            <a href="#extracurriculars" class="tab-button" data-tab="extracurriculars">Extracurriculars</a>
+            <a href="#experience" class="tab-button" data-tab="experience">Experience</a>
+            <a href="#leadership" class="tab-button" data-tab="leadership">Leadership</a>
         </nav>
     </header>
 
     <main>
-        <div id="about" class="tab-content active">
+        <section id="about" class="tab-content active">
             <h2 class="section-title">About Me</h2>
-            <p class="intro-text">Hi! I'm Ubah Ismail, a high school junior at Franklin High School in Elk Grove, CA. I have a strong passion for leadership, technology, and community service. I'm an active member of several clubs and organizations, where I work to help others and grow personally and professionally.</p>
-            
-            <p class="intro-text">Through my various extracurricular activities, I've developed strong skills in leadership, collaboration, and problem-solving. I'm always looking for new opportunities to challenge myself and continue making a positive impact in my community.</p>
 
-            <h3 class="section-subtitle">Awards & Achievements</h3>
-            <ul class="achievement-list">
-               <li class="achievement-item">
-                    <strong>President's Volunteer Service Award</strong>
-                   <p>Completed 100+ hours of volunteer service as a young adult, meeting the criteria for Gold recognition.</p>
-               </li>
-               <li class="achievement-item">
-                   <strong>International Technovation Competition </strong>
-                   <p>Developed and submitted an app independently to a group-oriented technology competition, reaching the quarterfinals and demonstrating initiative and technical skill.</p>
-               </li>
-               <li class="achievement-item">
-                   <strong>AP Scholar with Honor</strong>
-                   <p>Met the qualifications with an average score of 3.25 on all AP exams taken, and scores of 3 or higher on four or more exams.</p>
-               </li>        
-              <li class="achievement-item">
-                    <strong>National Honor Society </strong>
-                    <p>Selected for my academic achievements, leadership skills, and community service contributions to the school and beyond.</p>
-                </li>
-                  <li class="achievement-item">
-                    <strong>Excellence in Tutoring</strong>
-                    <p>Recognized for my commitment and ability to help students improve academically through one-on-one tutoring.</p>
-              </li>
-              <li class="achievement-item">
-                    <strong>Principal Honor Roll</strong>
-                    <p>Achieved recognition for consistent academic excellence from 2023–2025, maintaining high standards across all subjects.</p>
-              </li>
-            </ul>
+            <p class="intro-text">
+                Hi, I’m Ubah Ismail, a Mechanical Engineering student at the University of California,
+                Berkeley. I’m interested in robotics, mechatronics, aerospace, and product development,
+                especially where mechanical design meets embedded technology.
+            </p>
 
-            <h3 class="section-subtitle">Core Skills</h3>
+            <p class="intro-text">
+                I enjoy turning ideas into tangible products by modeling parts in CAD, 3D-printing and
+                testing prototypes, wiring sensors, and building software that makes a product useful.
+                Recently, I helped develop a wearable fall-detection prototype and joined Berkeley’s
+                CalSol and AeroSAE teams to gain more hands-on design and manufacturing experience.
+            </p>
+
+            <div class="highlight-grid">
+                <article class="highlight-card">
+                    <span class="highlight-label">Education</span>
+                    <h3>UC Berkeley</h3>
+                    <p>B.S. Mechanical Engineering<br>Expected May 2030</p>
+                </article>
+
+                <article class="highlight-card">
+                    <span class="highlight-label">Focus</span>
+                    <h3>Build → Test → Improve</h3>
+                    <p>CAD, prototyping, embedded systems, aerospace, and product development.</p>
+                </article>
+
+                <article class="highlight-card">
+                    <span class="highlight-label">Based in</span>
+                    <h3>Berkeley, California</h3>
+                    <p>Originally from Elk Grove, California.</p>
+                </article>
+            </div>
+
+            <h3 class="section-subtitle">Technical Skills</h3>
+
             <div class="skills-grid">
-                <div class="skill-badge"><span>Customer Service</span></div>
-                <div class="skill-badge"><span>Communication</span></div>
-                <div class="skill-badge"><span>Problem-Solving</span></div>
-                <div class="skill-badge"><span>Leadership</span></div>
-                <div class="skill-badge"><span>Teamwork</span></div>
-                <div class="skill-badge"><span>Adaptability</span></div>
+                <div class="skill-badge">Fusion 360 &amp; Tinkercad</div>
+                <div class="skill-badge">3D Printing &amp; Fabrication</div>
+                <div class="skill-badge">ESP32 &amp; Arduino</div>
+                <div class="skill-badge">Bluetooth Low Energy</div>
+                <div class="skill-badge">Python &amp; React</div>
+                <div class="skill-badge">Firebase &amp; GitHub</div>
+                <div class="skill-badge">Ansys</div>
+                <div class="skill-badge">English • Somali • Arabic • Spanish</div>
             </div>
-        </div>
 
-        <div id="projects" class="tab-content">
+            <h3 class="section-subtitle">Education &amp; Highlights</h3>
+
+            <ul class="achievement-list">
+                <li class="achievement-item">
+                    <strong>University of California, Berkeley</strong>
+                    <p>B.S. Mechanical Engineering, expected May 2030.</p>
+                </li>
+
+                <li class="achievement-item">
+                    <strong>Franklin High School</strong>
+                    <p>
+                        Graduated with a 4.45 GPA; Principal’s Honor Roll from 2023–2025,
+                        National Honor Society, and Award for Excellence in Tutoring.
+                    </p>
+                </li>
+
+                <li class="achievement-item">
+                    <strong>Cosumnes River College</strong>
+                    <p>Completed 17+ college courses through dual enrollment.</p>
+                </li>
+            </ul>
+        </section>
+
+        <section id="projects" class="tab-content">
             <h2 class="section-title">Projects</h2>
-            <p class="intro-text">Explore some of the initiatives and projects I've worked on to make a positive impact:</p>
-            
-            <div class="card-grid">
-                <div class="card">
-                    <div class="card-content">
-                        <div class="card-icon">🚗</div>
-                        <h4>EcoTrack App</h4>
-                        <p>A fuel tracking and carbon monitoring application featuring a competitive leaderboard to encourage sustainable driving habits and environmental awareness among users.</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-content">
-                        <div class="card-icon">📚</div>
-                        <h4>TFA Initiative</h4>
-                        <p>Co-founded a nonprofit organization dedicated to donating books to schools in Nigeria, promoting literacy and education access in underserved communities.</p>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-content">
-                        <div class="card-icon">🤝</div>
-                        <h4>Food Bank Volunteer</h4>
-                        <p>Assisted with organizing and distributing essential goods to families in need, developing logistics and community service skills while making a tangible difference.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div id="extracurriculars" class="tab-content">
-            <h2 class="section-title">Extracurriculars</h2>
-            <p class="intro-text">My involvement in various organizations and activities that shape my leadership and character:</p>
-            
+            <p class="intro-text">
+                Projects where I combine physical design, electronics, and software to solve practical problems.
+            </p>
+
+            <div class="card-grid">
+                <article class="card">
+                    <div class="card-icon">🦺</div>
+
+                    <span class="card-label">UC Berkeley PREP • Summer 2026</span>
+
+                    <h3>Nexus — Wearable Fall-Detection System</h3>
+
+                    <p>
+                        Designed and 3D-printed a wearable enclosure in Fusion 360 and Tinkercad,
+                        iterating the case, button, and strap geometry across multiple prototypes.
+                    </p>
+
+                    <p>
+                        Built a React/Firebase dashboard for fall alerts, GPS, and heart-rate monitoring
+                        using Bluetooth Low Energy communication with an ESP32.
+                    </p>
+
+                    <div class="tag-list">
+                        <span>Fusion 360</span>
+                        <span>ESP32</span>
+                        <span>BLE</span>
+                        <span>React</span>
+                        <span>Firebase</span>
+                    </div>
+                </article>
+
+                <article class="card">
+                    <div class="card-icon">🌱</div>
+
+                    <span class="card-label">Founder &amp; Developer • 2024–Present</span>
+
+                    <h3>EcoTrack App</h3>
+
+                    <p>
+                        Designed and built an environmental-impact app with carbon-footprint tracking,
+                        fuel-usage logging, a community leaderboard, and sustainability tasks.
+                    </p>
+
+                    <p>
+                        The project is hosted on GitHub and reflects my interest in using software to
+                        make sustainable habits easier to understand and maintain.
+                    </p>
+
+                    <div class="tag-list">
+                        <span>Product Design</span>
+                        <span>Web Development</span>
+                        <span>Sustainability</span>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="experience" class="tab-content">
+            <h2 class="section-title">Experience</h2>
+
+            <p class="intro-text">
+                Experiences that have strengthened my technical, communication, and problem-solving skills.
+            </p>
+
+            <ul class="timeline-list">
+                <li class="timeline-item">
+                    <div class="timeline-heading">
+                        <div>
+                            <h3>Student Product Design Engineer</h3>
+                            <p class="timeline-company">
+                                UC Berkeley Pre-Engineering Program — Maker Design Studio Expo
+                            </p>
+                        </div>
+
+                        <span>Jul–Aug 2026</span>
+                    </div>
+
+                    <p>
+                        Collaborated with four engineering scholars during a three-week sprint to develop
+                        an assistive wearable-device prototype through 15+ design workshops. Presented the
+                        final prototype to 100+ students, faculty, and industry professionals representing
+                        11 companies.
+                    </p>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-heading">
+                        <div>
+                            <h3>Data Annotation Contractor</h3>
+                            <p class="timeline-company">Handshake AI — Remote</p>
+                        </div>
+
+                        <span>May–Aug 2026</span>
+                    </div>
+
+                    <p>
+                        Reviewed multimodal audio, visual, and text data and generated timestamped video
+                        captions to support accurate, high-quality AI training data.
+                    </p>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-heading">
+                        <div>
+                            <h3>Marketing Intern</h3>
+                            <p class="timeline-company">YPLA — Elk Grove, CA</p>
+                        </div>
+
+                        <span>2024–2025</span>
+                    </div>
+
+                    <p>
+                        Built digital marketing campaigns for English-language programs, analyzed outreach
+                        data, and created promotional content for multilingual audiences.
+                    </p>
+                </li>
+
+                <li class="timeline-item">
+                    <div class="timeline-heading">
+                        <div>
+                            <h3>Arabic Tutor &amp; Summer Camp Instructor</h3>
+                            <p class="timeline-company">Community Arabic Program — Elk Grove, CA</p>
+                        </div>
+
+                        <span>Summer 2024</span>
+                    </div>
+
+                    <p>
+                        Taught daily Arabic literacy lessons to children, tracked progress, and adapted
+                        the curriculum in real time.
+                    </p>
+                </li>
+            </ul>
+        </section>
+
+        <section id="leadership" class="tab-content">
+            <h2 class="section-title">Leadership &amp; Service</h2>
+
+            <p class="intro-text">
+                I look for opportunities to contribute to teams, learn through hands-on work,
+                and serve the communities around me.
+            </p>
+
             <ul class="activity-list">
                 <li class="activity-item">
-                        <strong>Red Cross California Executive Board Member (SAF/IS Coordinator)</strong>
-    <p>Serve on the executive board for a 1,000-member organization: plan events and initiatives to promote cultural awareness and student engagement, actively assist members when needed, and lead event execution.</p>
-</li>
-<li class="activity-item">
-    <strong>Interact Club President</strong>
-    <p>Led a newly founded club of around 50 members during Sophomore year at Arabic School, inspired by my volunteer experience at a foster home abroad: organized service projects, coordinated volunteers, and drove community initiatives.</p>
-</li>
-<li class="activity-item">
-    <strong>Mock Trial</strong>
-    <p>Active participant since Junior Year, serving as an attorney in competitive mock trial competitions and developing critical thinking, public speaking, and legal analysis skills.</p>
-</li>
-<li class="activity-item">
-    <strong>Black Student Union (BSU)</strong>
-    <p>Serve as an officer since Freshman Year, promoting cultural awareness, celebrating diversity, and fostering an inclusive school community.</p>
-</li>
-<li class="activity-item">
-    <strong>YPLA Marketing Intern</strong>
-    <p>Marketing intern at nonprofit teaching English to non-native speakers, creating engaging outreach materials and managing social media campaigns.</p>
-</li>
-<li class="activity-item">
-    <strong>Cancer Kids First (CKF)</strong>
-    <p>Active participant since Sophomore Year, engaging in cultural and educational activities that promote understanding and community building.</p>
-</li>
-<li class="activity-item">
-    <strong>Giving Tree Club</strong>
-    <p>Serve as secretary for a club of around 40 members: organize meetings, coordinate donation drives for local elementary schools, and support community service initiatives that give back to those in need.</p>
-</li>
-<li class="activity-item">
-    <strong>Arabic Tutor</strong>
-    <p>Tutored throughout Sophomore Year and at 2024 Summer Camp, guiding over 20 students in Arabic language, culture, and traditions with patience and dedication.</p>
-</li>
+                    <strong>CalSol, UC Berkeley — Dynamics Team Member</strong>
+                    <p>
+                        Design and create wheel spokes for UC Berkeley’s solar vehicle, contributing
+                        to component integration and hands-on manufacturing.
+                    </p>
+                </li>
+
+                <li class="activity-item">
+                    <strong>AeroSAE, UC Berkeley — Aerostructures Team Member</strong>
+                    <p>
+                        Design and build a motor mount for the team’s RC aircraft while contributing
+                        to aircraft-structure design and fabrication.
+                    </p>
+                </li>
+
+                <li class="activity-item">
+                    <strong>American Red Cross — California Executive Youth Board</strong>
+                    <p>
+                        Served as the Service to Armed Forces &amp; International Relations Coordinator,
+                        helping coordinate youth-led initiatives supporting military families,
+                        humanitarian work, and statewide advocacy.
+                    </p>
+                </li>
+
+                <li class="activity-item">
+                    <strong>Community Service</strong>
+                    <p>
+                        Completed 1,000+ volunteer hours through food banks and youth programs
+                        in Elk Grove and Oman.
+                    </p>
+                </li>
             </ul>
-        </div>
+        </section>
     </main>
 
     <footer>
@@ -152,9 +909,155 @@
 
     <button id="scrollTop" aria-label="Scroll to top">↑</button>
 
-    <script src="script.js"></script>
+    <script>
+        const canvas = document.getElementById("particles-canvas");
+        const ctx = canvas.getContext("2d");
+        const particles = [];
+        const particleCount = 50;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.radius = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > canvas.width) {
+                    this.vx *= -1;
+                }
+
+                if (this.y < 0 || this.y > canvas.height) {
+                    this.vy *= -1;
+                }
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = "rgba(99, 102, 241, 0.3)";
+                ctx.fill();
+            }
+        }
+
+        resizeCanvas();
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach((particle, index) => {
+                particle.update();
+                particle.draw();
+
+                particles.slice(index + 1).forEach((otherParticle) => {
+                    const dx = particle.x - otherParticle.x;
+                    const dy = particle.y - otherParticle.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) {
+                        ctx.beginPath();
+                        ctx.strokeStyle =
+                            `rgba(99, 102, 241, ${0.2 - distance / 500})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particle.x, particle.y);
+                        ctx.lineTo(otherParticle.x, otherParticle.y);
+                        ctx.stroke();
+                    }
+                });
+            });
+
+            requestAnimationFrame(animateParticles);
+        }
+
+        animateParticles();
+
+        window.addEventListener("resize", resizeCanvas);
+
+        const tabButtons = document.querySelectorAll(".tab-button");
+        const tabContents = document.querySelectorAll(".tab-content");
+
+        function showTab(tabName) {
+            tabButtons.forEach((button) => {
+                button.classList.toggle(
+                    "active",
+                    button.dataset.tab === tabName
+                );
+            });
+
+            tabContents.forEach((content) => {
+                content.classList.toggle(
+                    "active",
+                    content.id === tabName
+                );
+            });
+
+            history.replaceState(null, "", `#${tabName}`);
+        }
+
+        tabButtons.forEach((button) => {
+            button.addEventListener("click", (event) => {
+                event.preventDefault();
+
+                showTab(button.dataset.tab);
+
+                if (window.innerWidth <= 768) {
+                    document.querySelector("main").scrollIntoView({
+                        behavior: "smooth"
+                    });
+                }
+            });
+        });
+
+        const startingTab = window.location.hash.replace("#", "");
+
+        if (startingTab && document.getElementById(startingTab)) {
+            showTab(startingTab);
+        }
+
+        const progressBar = document.getElementById("progressBar");
+        const scrollTopButton = document.getElementById("scrollTop");
+
+        function updateScrollElements() {
+            const scrollTop =
+                document.body.scrollTop ||
+                document.documentElement.scrollTop;
+
+            const scrollHeight =
+                document.documentElement.scrollHeight -
+                document.documentElement.clientHeight;
+
+            progressBar.style.width =
+                `${scrollHeight ? (scrollTop / scrollHeight) * 100 : 0}%`;
+
+            scrollTopButton.classList.toggle(
+                "visible",
+                scrollTop > 300
+            );
+        }
+
+        window.addEventListener("scroll", updateScrollElements);
+        updateScrollElements();
+
+        scrollTopButton.addEventListener("click", () => {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+        });
+    </script>
 </body>
 </html>
-
-
-
