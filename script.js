@@ -1,11 +1,13 @@
-// Animation For my Face
-const canvas = document.getElementById('particles-canvas');
-const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
-
+// Animated background
+const canvas = document.getElementById("particles-canvas");
+const ctx = canvas.getContext("2d");
 const particles = [];
 const particleCount = 50;
+
+function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
 
 class Particle {
     constructor() {
@@ -27,23 +29,25 @@ class Particle {
     draw() {
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(99, 102, 241, 0.3)';
+        ctx.fillStyle = "rgba(99, 102, 241, 0.3)";
         ctx.fill();
     }
 }
 
-for (let i = 0; i < particleCount; i++) {
+resizeCanvas();
+
+for (let i = 0; i < particleCount; i += 1) {
     particles.push(new Particle());
 }
 
 function animateParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    particles.forEach((particle, i) => {
+
+    particles.forEach((particle, index) => {
         particle.update();
         particle.draw();
 
-        particles.slice(i + 1).forEach(otherParticle => {
+        particles.slice(index + 1).forEach((otherParticle) => {
             const dx = particle.x - otherParticle.x;
             const dy = particle.y - otherParticle.y;
             const distance = Math.sqrt(dx * dx + dy * dy);
@@ -64,74 +68,109 @@ function animateParticles() {
 
 animateParticles();
 
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
+window.addEventListener("resize", resizeCanvas);
 
-// Tab Switching
-const tabButtons = document.querySelectorAll('.tab-button');
-const tabContents = document.querySelectorAll('.tab-content');
+// Section tabs
+const tabButtons = document.querySelectorAll(".tab-button");
+const tabContents = document.querySelectorAll(".tab-content");
 
-tabButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        const targetTab = button.getAttribute('data-tab');
-        
-        tabButtons.forEach(btn => btn.classList.remove('active'));
-        tabContents.forEach(content => content.classList.remove('active'));
-        
-        button.classList.add('active');
-        document.getElementById(targetTab).classList.add('active');
+function showTab(targetTab, updateHash = true) {
+    const targetContent = document.getElementById(targetTab);
+
+    if (!targetContent) return;
+
+    tabButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.tab === targetTab);
+    });
+
+    tabContents.forEach((content) => {
+        content.classList.toggle("active", content.id === targetTab);
+    });
+
+    if (updateHash) {
+        history.replaceState(null, "", `#${targetTab}`);
+    }
+}
+
+tabButtons.forEach((button) => {
+    button.addEventListener("click", (event) => {
+        event.preventDefault();
+
+        showTab(button.dataset.tab);
 
         if (window.innerWidth <= 768) {
-            document.querySelector('main').scrollIntoView({ behavior: 'smooth' });
+            document.querySelector("main").scrollIntoView({
+                behavior: "smooth"
+            });
         }
     });
 });
 
-// Progress Bar
-window.addEventListener('scroll', () => {
-    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = (winScroll / height) * 100;
-    document.getElementById('progressBar').style.width = scrolled + '%';
+const requestedTab = window.location.hash.replace("#", "");
+
+if (requestedTab) {
+    showTab(requestedTab, false);
+}
+
+// Scroll progress and back-to-top button
+const progressBar = document.getElementById("progressBar");
+const scrollTopButton = document.getElementById("scrollTop");
+
+function updateScrollUI() {
+    const scrollTop =
+        document.body.scrollTop ||
+        document.documentElement.scrollTop;
+
+    const scrollHeight =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
+
+    progressBar.style.width = `${
+        scrollHeight ? (scrollTop / scrollHeight) * 100 : 0
+    }%`;
+
+    scrollTopButton.classList.toggle("visible", scrollTop > 300);
+}
+
+window.addEventListener("scroll", updateScrollUI, {
+    passive: true
 });
 
-// Scroll to Top Button
-const scrollTopBtn = document.getElementById('scrollTop');
+updateScrollUI();
 
-window.addEventListener('scroll', () => {
-    if (window.pageYOffset > 300) {
-        scrollTopBtn.classList.add('visible');
-    } else {
-        scrollTopBtn.classList.remove('visible');
+scrollTopButton.addEventListener("click", () => {
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+});
+
+// Reveal content as it enters the viewport
+const observer = new IntersectionObserver(
+    (entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = "1";
+                entry.target.style.transform = "translateY(0)";
+                observer.unobserve(entry.target);
+            }
+        });
+    },
+    {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px"
     }
-});
+);
 
-scrollTopBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+document
+    .querySelectorAll(
+        ".card, .achievement-item, .activity-item, .skill-badge, .timeline-item, .highlight-card"
+    )
+    .forEach((element) => {
+        element.style.opacity = "0";
+        element.style.transform = "translateY(24px)";
+        element.style.transition =
+            "opacity 0.7s ease, transform 0.7s ease";
 
-// Fade in elements as you scroll down the page
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
+        observer.observe(element);
     });
-}, observerOptions);
-
-document.querySelectorAll('.card, .achievement-item, .activity-item, .skill-badge').forEach(el => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(30px)';
-    el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
-    observer.observe(el);
-});
