@@ -1,6 +1,6 @@
-// Animated background
 const canvas = document.getElementById("particles-canvas");
 const ctx = canvas.getContext("2d");
+
 const particles = [];
 const particleCount = 50;
 
@@ -22,8 +22,13 @@ class Particle {
         this.x += this.vx;
         this.y += this.vy;
 
-        if (this.x < 0 || this.x > canvas.width) this.vx *= -1;
-        if (this.y < 0 || this.y > canvas.height) this.vy *= -1;
+        if (this.x < 0 || this.x > canvas.width) {
+            this.vx *= -1;
+        }
+
+        if (this.y < 0 || this.y > canvas.height) {
+            this.vy *= -1;
+        }
     }
 
     draw() {
@@ -36,7 +41,7 @@ class Particle {
 
 resizeCanvas();
 
-for (let i = 0; i < particleCount; i += 1) {
+for (let i = 0; i < particleCount; i++) {
     particles.push(new Particle());
 }
 
@@ -54,7 +59,8 @@ function animateParticles() {
 
             if (distance < 100) {
                 ctx.beginPath();
-                ctx.strokeStyle = `rgba(99, 102, 241, ${0.2 - distance / 500})`;
+                ctx.strokeStyle =
+                    `rgba(99, 102, 241, ${0.2 - distance / 500})`;
                 ctx.lineWidth = 0.5;
                 ctx.moveTo(particle.x, particle.y);
                 ctx.lineTo(otherParticle.x, otherParticle.y);
@@ -70,26 +76,25 @@ animateParticles();
 
 window.addEventListener("resize", resizeCanvas);
 
-// Section tabs
 const tabButtons = document.querySelectorAll(".tab-button");
 const tabContents = document.querySelectorAll(".tab-content");
 
-function showTab(targetTab, updateHash = true) {
-    const targetContent = document.getElementById(targetTab);
-
-    if (!targetContent) return;
-
+function showTab(tabName) {
     tabButtons.forEach((button) => {
-        button.classList.toggle("active", button.dataset.tab === targetTab);
+        button.classList.toggle(
+            "active",
+            button.dataset.tab === tabName
+        );
     });
 
     tabContents.forEach((content) => {
-        content.classList.toggle("active", content.id === targetTab);
+        content.classList.toggle(
+            "active",
+            content.id === tabName
+        );
     });
 
-    if (updateHash) {
-        history.replaceState(null, "", `#${targetTab}`);
-    }
+    history.replaceState(null, "", `#${tabName}`);
 }
 
 tabButtons.forEach((button) => {
@@ -106,17 +111,16 @@ tabButtons.forEach((button) => {
     });
 });
 
-const requestedTab = window.location.hash.replace("#", "");
+const startingTab = window.location.hash.replace("#", "");
 
-if (requestedTab) {
-    showTab(requestedTab, false);
+if (startingTab && document.getElementById(startingTab)) {
+    showTab(startingTab);
 }
 
-// Scroll progress and back-to-top button
 const progressBar = document.getElementById("progressBar");
 const scrollTopButton = document.getElementById("scrollTop");
 
-function updateScrollUI() {
+function updateScrollElements() {
     const scrollTop =
         document.body.scrollTop ||
         document.documentElement.scrollTop;
@@ -125,18 +129,18 @@ function updateScrollUI() {
         document.documentElement.scrollHeight -
         document.documentElement.clientHeight;
 
-    progressBar.style.width = `${
-        scrollHeight ? (scrollTop / scrollHeight) * 100 : 0
-    }%`;
+    progressBar.style.width =
+        `${scrollHeight ? (scrollTop / scrollHeight) * 100 : 0}%`;
 
-    scrollTopButton.classList.toggle("visible", scrollTop > 300);
+    scrollTopButton.classList.toggle(
+        "visible",
+        scrollTop > 300
+    );
 }
 
-window.addEventListener("scroll", updateScrollUI, {
-    passive: true
-});
+window.addEventListener("scroll", updateScrollElements);
 
-updateScrollUI();
+updateScrollElements();
 
 scrollTopButton.addEventListener("click", () => {
     window.scrollTo({
@@ -144,33 +148,3 @@ scrollTopButton.addEventListener("click", () => {
         behavior: "smooth"
     });
 });
-
-// Reveal content as it enters the viewport
-const observer = new IntersectionObserver(
-    (entries) => {
-        entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = "1";
-                entry.target.style.transform = "translateY(0)";
-                observer.unobserve(entry.target);
-            }
-        });
-    },
-    {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px"
-    }
-);
-
-document
-    .querySelectorAll(
-        ".card, .achievement-item, .activity-item, .skill-badge, .timeline-item, .highlight-card"
-    )
-    .forEach((element) => {
-        element.style.opacity = "0";
-        element.style.transform = "translateY(24px)";
-        element.style.transition =
-            "opacity 0.7s ease, transform 0.7s ease";
-
-        observer.observe(element);
-    });
